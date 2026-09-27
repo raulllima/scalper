@@ -1,0 +1,23 @@
+{
+  "name": "scalper-bot",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc --noEmit",
+    "start": "tsx src/index.ts",
+    "check": "npm run build"
+  },
+  "dependencies": {
+    "ini": "^5.0.0",
+    "nodemailer": "^10.0.10",
+    "playwright": "^1.51.0"
+  },
+  "devDependencies": {
+    "@types/ini": "^4.1.1",
+    "@types/node": "^22.13.10",
+    "@types/nodemailer": "^6.4.17",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

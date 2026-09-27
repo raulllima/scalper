@@ -1,0 +1,7 @@
+node_modules/
+config.ini
+output/
+orders/
+playwright-report/
+test-results/
+.playwright-mcp/
