@@ -1,23 +1,35 @@
-# Scalper Bot
+# Scalper
 
-Automacao de compra para lojas configuradas, iniciando pela Gamer Hut. O fluxo prioriza as requisicoes usadas pela pagina quando forem identificaveis e usa navegador automatizado nas etapas restantes.
+Aplicativo desktop com Vue 3, Electron e componentes no padrao shadcn-vue para monitorar disponibilidade e comprar na Gamer Hut.
 
-## Preparacao
+## Execucao
 
 1. Instale Node.js 22 ou superior.
-2. Execute `npm install` e depois `npx playwright install chromium`.
-3. Copie `config.example.ini` para `config.ini` e preencha os campos, inclusive as senhas.
-4. Execute `npm start`.
+2. Execute `npm install` e `npx playwright install chromium`.
+3. Execute `npm run dev`.
+4. Na primeira abertura pelo projeto, o aplicativo importa automaticamente o `config.ini` existente. Depois disso, o arquivo nao e mais necessario.
+5. Em **Settings**, revise os dados da conta, endereco e notificacoes. Senhas da loja e do SMTP sao cifradas pelo cofre do sistema operacional.
+6. Em **Buys**, busque um jogo e escolha **Monitorar** ou **Monitorar e comprar**.
 
-Cada compra concluida gera `orders/<site>-<numero-do-pedido>.txt`, contendo o PIX copia-e-cola. Quando configurado, o PIX tambem e enviado por SMTP. O QR Code e salvo como captura de tela em `output/` quando a pagina final o exibe.
+`npm run build` gera o instalador Windows. `npm run check` valida tipos e produz os bundles sem empacotar.
+
+## Recursos
+
+- Menu com Buys, Logs e Settings.
+- Busca de produtos na Gamer Hut e monitoramento com intervalo configuravel em segundos.
+- Status de conexao da loja: Conectado, Conectando ou Desconectado.
+- Cancelamento de monitoramentos em execucao e logs em tempo real durante a sessao.
+- Checkout PIX automatico para a acao **Monitorar e comprar**.
+- Pedidos PIX concluidos sao salvos em `orders/` dentro da pasta de dados do aplicativo.
+- Todas as secoes do antigo `config.ini`, incluindo SMTP, ficam disponiveis em **Settings**.
 
 ## Regras
 
 - O bot observa o estoque do produto encontrado e recarrega a pagina em loop ate o botao de compra aparecer.
-- `availability.poll_interval_seconds` define o intervalo entre as verificacoes; `timeout_minutes = 0` observa indefinidamente.
+- O intervalo e definido em **Settings**; `timeout = 0` observa indefinidamente.
 - A verificacao de estoque, a limpeza do carrinho, a adicao e o ajuste de quantidade usam requisicoes HTTP reaproveitando a sessao; o navegador fica para login e checkout.
 - O bot zera o carrinho assim que o produto fica disponivel e depois adiciona apenas o produto encontrado.
-- `product.quantity` define a quantidade exata aplicada no carrinho; a quantidade e confirmada antes de seguir.
+- A quantidade define o total aplicado no carrinho; ela e confirmada antes de seguir.
 - Se uma tentativa de compra falhar, o fluxo reinicia e observa novamente, repetindo ate concluir ou atingir o limite.
 - `product.name` aceita o nome desejado; o bot compara os resultados normalizados por similaridade e exige o minimo em `similarity_threshold`.
 - `shipping.preference` aceita `mais_barato` ou `mais_rapido`.

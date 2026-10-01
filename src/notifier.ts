@@ -11,16 +11,18 @@ function safeFilePart(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "desconhecido";
 }
 
-export async function notify(config: Config, pix: CompletedOrder): Promise<void> {
-  mkdirSync("output", { recursive: true });
-  mkdirSync("orders", { recursive: true });
+export async function notify(config: Config, pix: CompletedOrder, directory = process.cwd()): Promise<void> {
+  const outputDirectory = join(directory, "output");
+  const ordersDirectory = join(directory, "orders");
+  mkdirSync(outputDirectory, { recursive: true });
+  mkdirSync(ordersDirectory, { recursive: true });
   const stamp = new Date().toISOString().replace(/[:.]/g, "-");
   const text = `PIX copia e cola\n\n${pix.code}\n\nPedido: ${pix.orderUrl}\n`;
-  const orderPath = join("orders", `${safeFilePart(pix.storeName)}-${safeFilePart(pix.orderNumber)}.txt`);
+  const orderPath = join(ordersDirectory, `${safeFilePart(pix.storeName)}-${safeFilePart(pix.orderNumber)}.txt`);
   writeFileSync(orderPath, text, { encoding: "utf8", mode: 0o600 });
-  const textPath = join("output", `pix-${stamp}.txt`);
+  const textPath = join(outputDirectory, `pix-${stamp}.txt`);
   writeFileSync(textPath, text, { encoding: "utf8", mode: 0o600 });
-  if (pix.screenshot) writeFileSync(join("output", `pix-${stamp}.png`), pix.screenshot, { mode: 0o600 });
+  if (pix.screenshot) writeFileSync(join(outputDirectory, `pix-${stamp}.png`), pix.screenshot, { mode: 0o600 });
   console.log(`PIX salvo em ${orderPath}`);
   if (config.notification.channel === "local") return;
   const transport = nodemailer.createTransport({

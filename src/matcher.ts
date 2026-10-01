@@ -1,4 +1,4 @@
-export interface ProductCandidate { title: string; url: string; }
+export interface ProductCandidate { title: string; url: string; imageUrl?: string; price?: string; }
 
 function normalize(value: string): string {
   return value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
